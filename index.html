@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirDosa - AI-Powered Drone Dosa Delivery</title>
+  <meta name="description" content="Get golden, crispy dosas delivered straight to your balcony or window in 180 seconds flat. AirDosa combines automated cloud kitchens with autonomous drone flight paths.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* ==========================================
+       1. DESIGN SYSTEM & CSS VARIABLES
+       ========================================== */
+    :root {
+      --bg-base: hsl(225, 25%, 9%);
+      --bg-card: rgba(30, 41, 59, 0.45);
+      --bg-nav: rgba(15, 23, 42, 0.65);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-primary: hsl(210, 40%, 98%);
+      --text-secondary: hsl(215, 15%, 75%);
+      --text-muted: hsl(215, 10%, 60%);
+      
+      --accent-saffron: hsl(28, 100%, 53%);
+      --accent-saffron-rgb: 251, 146, 60;
+      --accent-saffron-hover: hsl(20, 100%, 50%);
+      --accent-cyan: hsl(185, 100%, 48%);
+      --accent-cyan-rgb: 34, 211, 238;
+      
+      --shadow-color: rgba(0, 0, 0, 0.6);
+      --glow-saffron: rgba(251, 146, 60, 0.25);
+      --glow-cyan: rgba(34, 211, 238, 0.25);
+      
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      
+      --transition-base: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-base: hsl(210, 20%, 97%);
+      --bg-card: rgba(255, 255, 255, 0.75);
+      --bg-nav: rgba(255, 255, 255, 0.75);
+      --border-color: rgba(0, 0, 0, 0.07);
+      --text-primary: hsl(225, 25%, 12%);
+      --text-secondary: hsl(225, 12%, 35%);
+      --text-muted: hsl(225, 8%, 50%);
+      
+      --accent-saffron: hsl(24, 100%, 50%);
+      --accent-saffron-hover: hsl(15, 100%, 46%);
+      --accent-cyan: hsl(185, 100%, 40%);
+      
+      --shadow-color: rgba(15, 23, 42, 0.06);
+      --glow-saffron: rgba(251, 146, 60, 0.12);
+      --glow-cyan: rgba(34, 211, 238, 0.12);
+    }
+
+    /* ==========================================
+       2. BASE STYLES
+       ========================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: var(--transition-base);
+      
+      /* Subtle mesh gradient overlays */
+      background-image: 
+        radial-gradient(at 10% 20%, rgba(var(--accent-saffron-rgb), 0.05) 0px, transparent 45%),
+        radial-gradient(at 90% 80%, rgba(var(--accent-cyan-rgb), 0.05) 0px, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: var(--transition-base);
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ==========================================
+       3. REVEAL-ON-SCROLL UTILITIES
+       ========================================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+    .reveal-delay-3 { transition-delay: 0.45s; }
+
+    /* ==========================================
+       4. HEADER & NAVIGATION
+       ========================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background-color: var(--bg-nav);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition-base);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 80px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      fill: var(--accent-saffron);
+      filter: drop-shadow(0 0 6px var(--glow-saffron));
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      font-weight: 500;
+      position: relative;
+      padding: 6px 0;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-saffron), var(--accent-cyan));
+      transition: var(--transition-base);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-toggle-btn:hover {
+      background-color: var(--border-color);
+      transform: scale(1.05);
+    }
+
+    .theme-toggle-btn svg {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s;
+    }
+
+    .theme-toggle-sun {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+
+    .theme-toggle-moon {
+      opacity: 0;
+      transform: rotate(90deg);
+    }
+
+    [data-theme="light"] .theme-toggle-sun {
+      opacity: 0;
+      transform: rotate(-90deg);
+    }
+
+    [data-theme="light"] .theme-toggle-moon {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+
+    /* Header CTA Button */
+    .btn-nav {
+      background: linear-gradient(135deg, var(--accent-saffron), var(--accent-saffron-hover));
+      color: white;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 15px var(--glow-saffron);
+      transition: var(--transition-base);
+    }
+
+    .btn-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(var(--accent-saffron-rgb), 0.4);
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+    }
+
+    /* ==========================================
+       5. HERO SECTION
+       ========================================== */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: 100px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-badge {
+      align-self: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(var(--accent-cyan-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-cyan-rgb), 0.25);
+      color: var(--accent-cyan);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 15px rgba(var(--accent-cyan-rgb), 0.05);
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    .hero-title span.saffron-gradient {
+      background: linear-gradient(135deg, var(--accent-saffron), #fcd34d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .hero-title span.cyan-glow {
+      text-shadow: 0 0 20px var(--glow-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .hero-description {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    /* Button Styles */
+    .btn {
+      padding: 16px 32px;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition-base);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-saffron), var(--accent-saffron-hover));
+      color: white;
+      box-shadow: 0 8px 30px var(--glow-saffron);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(var(--accent-saffron-rgb), 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-metrics {
+      display: flex;
+      gap: 40px;
+      margin-top: 24px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 32px;
+    }
+
+    .metric-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Hero Drone Render Container */
+    .hero-graphic-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-graphic-glow {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--glow-saffron) 0%, transparent 70%);
+      filter: blur(40px);
+      z-index: -1;
+      animation: rotateGlow 20s linear infinite;
+    }
+
+    .hero-drone-image {
+      position: relative;
+      z-index: 2;
+      animation: droneFloat 6s ease-in-out infinite;
+      filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .hero-tag-badge {
+      position: absolute;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 25px var(--shadow-color);
+      z-index: 10;
+    }
+
+    .badge-top-right {
+      top: 10%;
+      right: -5%;
+      animation: badgeFloat 7s ease-in-out infinite 0.5s;
+    }
+
+    .badge-bottom-left {
+      bottom: 15%;
+      left: -5%;
+      animation: badgeFloat 5.5s ease-in-out infinite 1.5s;
+    }
+
+    .badge-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(var(--accent-saffron-rgb), 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-saffron);
+    }
+
+    .badge-icon.cyan-bg {
+      background: rgba(var(--accent-cyan-rgb), 0.1);
+      color: var(--accent-cyan);
+    }
+
+    .badge-text h4 {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+
+    .badge-text p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Keyframe Animations */
+    @keyframes droneFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotate(1.5deg);
+      }
+    }
+
+    @keyframes badgeFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes rotateGlow {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* ==========================================
+       6. FEATURE CARDS SECTION
+       ========================================== */
+    .section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 60px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-saffron);
+    }
+
+    .section-title {
+      font-size: 2.75rem;
+      color: var(--text-primary);
+    }
+
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      transition: var(--transition-base);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(var(--accent-saffron-rgb), 0.03) 0%, transparent 100%);
+      opacity: 0;
+      transition: var(--transition-base);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(var(--accent-saffron-rgb), 0.2);
+      box-shadow: 0 20px 40px var(--shadow-color), 0 0 25px var(--glow-saffron);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon-container {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-md);
+      background: rgba(var(--accent-saffron-rgb), 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-saffron);
+      transition: var(--transition-base);
+      border: 1px solid rgba(var(--accent-saffron-rgb), 0.15);
+    }
+
+    .feature-card:hover .feature-icon-container {
+      background: var(--accent-saffron);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(var(--accent-saffron-rgb), 0.3);
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ==========================================
+       7. PRICING SECTION
+       ========================================== */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-base);
+    }
+
+    .pricing-card.popular {
+      border-color: rgba(var(--accent-cyan-rgb), 0.3);
+      box-shadow: 0 15px 30px var(--shadow-color);
+    }
+
+    .pricing-card.popular::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent-saffron), var(--accent-cyan));
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px var(--shadow-color);
+    }
+
+    .pricing-card.popular:hover {
+      border-color: rgba(var(--accent-cyan-rgb), 0.6);
+      box-shadow: 0 20px 40px var(--shadow-color), 0 0 30px var(--glow-cyan);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(var(--accent-cyan-rgb), 0.1);
+      border: 1px solid rgba(var(--accent-cyan-rgb), 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(var(--accent-cyan-rgb), 0.1);
+    }
+
+    .plan-name {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+      min-height: 48px;
+    }
+
+    .plan-price-container {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 32px;
+    }
+
+    .plan-currency {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .plan-price {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+    }
+
+    .plan-period {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-grow: 1;
+    }
+
+    .plan-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .plan-features li i {
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+
+    .pricing-card.popular .plan-features li i {
+      color: var(--accent-saffron);
+    }
+
+    .btn-pricing {
+      width: 100%;
+      justify-content: center;
+      padding: 14px;
+    }
+
+    /* ==========================================
+       8. FLOATING ORDER BUTTON
+       ========================================== */
+    .btn-floating-order {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 90;
+      background: linear-gradient(135deg, var(--accent-saffron), var(--accent-saffron-hover));
+      color: white;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 25px var(--glow-saffron);
+      transition: var(--transition-base);
+      animation: floatingBounce 3s ease-in-out infinite;
+    }
+
+    .btn-floating-order:hover {
+      transform: scale(1.1) translateY(-4px);
+      box-shadow: 0 12px 30px rgba(var(--accent-saffron-rgb), 0.5);
+      animation-play-state: paused;
+    }
+
+    .btn-floating-order svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Pulse wave effect around button */
+    .btn-floating-order::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: var(--accent-saffron);
+      opacity: 0.4;
+      z-index: -1;
+      animation: pulseWave 3s infinite;
+    }
+
+    @keyframes floatingBounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes pulseWave {
+      0% {
+        transform: scale(1);
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* ==========================================
+       9. INTERACTIVE ORDER DRAWER
+       ========================================== */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .order-drawer {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 100%;
+      max-width: 480px;
+      height: 100vh;
+      background: var(--bg-base);
+      border-left: 1px solid var(--border-color);
+      box-shadow: -10px 0 40px var(--shadow-color);
+      z-index: 1001;
+      transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .order-drawer.open {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-header h2 {
+      font-size: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    .btn-close-drawer {
+      background: transparent;
+      color: var(--text-secondary);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      transition: var(--transition-base);
+    }
+
+    .btn-close-drawer:hover {
+      background: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .drawer-body {
+      padding: 24px;
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .drawer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drawer-section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Dosa Grid Selector */
+    .dosa-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .dosa-option {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: var(--transition-base);
+    }
+
+    .dosa-option:hover {
+      border-color: rgba(var(--accent-saffron-rgb), 0.3);
+      transform: translateX(4px);
+    }
+
+    .dosa-option.selected {
+      border-color: var(--accent-saffron);
+      background: rgba(var(--accent-saffron-rgb), 0.05);
+      box-shadow: 0 0 15px var(--glow-saffron);
+    }
+
+    .dosa-option-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dosa-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    .dosa-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .dosa-price {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--accent-saffron);
+      font-size: 1.15rem;
+    }
+
+    /* Spice Slider Container */
+    .spice-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .spice-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .spice-val-display {
+      color: var(--accent-saffron);
+      font-weight: 700;
+    }
+
+    .slider-wrapper {
+      position: relative;
+    }
+
+    .spice-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--border-color);
+      outline: none;
+    }
+
+    .spice-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-saffron);
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--glow-saffron);
+      transition: var(--transition-base);
+    }
+
+    .spice-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .spice-label-under {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-height: 20px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      color: var(--text-primary);
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition-base);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px var(--glow-cyan);
+    }
+
+    /* Drawer Footer Summary */
+    .drawer-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-label {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .summary-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .btn-checkout {
+      width: 100%;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    /* ==========================================
+       10. RADAR FLIGHT SIMULATION INTERFACE
+       ========================================== */
+    .simulation-container {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      padding: 24px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .simulation-container.active {
+      display: flex;
+    }
+
+    .radar-screen-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid rgba(var(--accent-cyan-rgb), 0.3);
+      box-shadow: 0 0 20px var(--glow-cyan);
+      overflow: hidden;
+    }
+
+    .radar-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .radar-sweep {
+      fill: none;
+      stroke: url(#sweep-gradient);
+      stroke-width: 2px;
+      transform-origin: 110px 110px;
+      animation: radarSweepAnim 4s linear infinite;
+    }
+
+    .radar-grid {
+      fill: none;
+      stroke: rgba(var(--accent-cyan-rgb), 0.15);
+      stroke-width: 1px;
+    }
+
+    .radar-blip {
+      fill: var(--accent-saffron);
+      filter: drop-shadow(0 0 6px var(--glow-saffron));
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .radar-blip.active {
+      opacity: 1;
+      animation: blipPulse 1.5s ease-out infinite;
+    }
+
+    @keyframes radarSweepAnim {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes blipPulse {
+      0% { r: 3px; opacity: 1; }
+      100% { r: 12px; opacity: 0; }
+    }
+
+    /* Console Logger */
+    .console-logger {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      height: 180px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .console-line {
+      display: flex;
+      gap: 8px;
+      opacity: 0;
+      animation: lineFadeIn 0.3s forwards;
+    }
+
+    .line-time {
+      color: #64748b;
+      flex-shrink: 0;
+    }
+
+    .line-msg {
+      word-break: break-all;
+    }
+
+    .line-success {
+      color: #4ade80;
+    }
+
+    .line-warning {
+      color: #fb923c;
+    }
+
+    @keyframes lineFadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Simulation Delivery Complete State */
+    .delivery-success-wrapper {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      margin-top: 10px;
+      animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delivery-success-wrapper.active {
+      display: flex;
+    }
+
+    .success-badge {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(74, 222, 128, 0.15);
+      border: 2px solid #4ade80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4ade80;
+      font-size: 2rem;
+      filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
+    }
+
+    .success-title {
+      font-size: 1.35rem;
+      color: var(--text-primary);
+    }
+
+    .success-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Progress bar */
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-saffron));
+      transition: width 0.3s ease;
+    }
+
+    /* ==========================================
+       11. FOOTER SECTION
+       ========================================== */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 60px 0 40px 0;
+      background: rgba(15, 23, 42, 0.3);
+      position: relative;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .footer-brand p {
+      color: var(--text-secondary);
+      max-width: 320px;
+      font-size: 0.95rem;
+    }
+
+    .system-status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      align-self: flex-start;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #4ade80;
+      animation: statusPulse 2s infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .footer-links-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .footer-links-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-color);
+      padding-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ==========================================
+       12. RESPONSIVE DESIGN MEDIA QUERIES
+       ========================================== */
+    @media (max-width: 992px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        text-align: center;
+      }
+
+      .hero-content {
+        align-items: center;
+      }
+
+      .hero-description {
+        margin: 0 auto;
+      }
+
+      .hero-metrics {
+        justify-content: center;
+        width: 100%;
+      }
+
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .nav-links {
+        display: none; /* In a production app, we would add a mobile menu drawer */
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================
+       HEADER & NAVIGATION BAR
+       ========================================== -->
+  <header>
+    <div class="container nav-container">
+      <a href="#" class="logo" id="nav-logo">
+        <!-- SVG Drone Logo -->
+        <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="2" />
+          <path d="M12 4c2.2 0 4 .8 4 2s-1.8 2-4 2-4-.8-4-2 1.8-2 4-2z M12 16c2.2 0 4 .8 4 2s-1.8 2-4 2-4-.8-4-2 1.8-2 4-2z" opacity="0.4"/>
+          <path d="M4 12c0-2.2.8-4 2-4s2 1.8 2 4-.8 4-2 4-2-1.8-2-4z M16 12c0-2.2.8-4 2-4s2 1.8 2 4-.8 4-2 4-2-1.8-2-4z" opacity="0.4"/>
+          <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.5" />
+          <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        <span>AirDosa</span>
+      </a>
+      
+      <ul class="nav-links">
+        <li><a href="#features" id="nav-link-features">Features</a></li>
+        <li><a href="#pricing" id="nav-link-pricing">Pricing</a></li>
+        <li><a href="#how-it-works" id="nav-link-how">Drone Network</a></li>
+      </ul>
+      
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle Theme">
+          <!-- Sun Icon SVG -->
+          <svg class="theme-toggle-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2"></path>
+            <path d="M12 20v2"></path>
+            <path d="M4.93 4.93l1.41 1.41"></path>
+            <path d="M17.66 17.66l1.41 1.41"></path>
+            <path d="M2 12h2"></path>
+            <path d="M20 12h2"></path>
+            <path d="M6.34 17.66l-1.41 1.41"></path>
+            <path d="M19.07 4.93l-1.41 1.41"></path>
+          </svg>
+          <!-- Moon Icon SVG -->
+          <svg class="theme-toggle-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+          </svg>
+        </button>
+        
+        <button class="btn-nav" id="launch-app-btn">Launch App</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTENT
+       ========================================== -->
+  <main>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content reveal">
+          <div class="hero-badge">
+            <i data-lucide="zap" style="width: 14px; height: 14px;"></i>
+            Autonomous Delivery Grid Active
+          </div>
+          <h1 class="hero-title">
+            Hot Dosa.<br>
+            <span class="saffron-gradient">AI Flight.</span><br>
+            <span class="cyan-glow">3-Min Arrival.</span>
+          </h1>
+          <p class="hero-description">
+            Craving crispy, steaming-hot dosas? Our autonomous drone fleets bypass Indian traffic, utilizing dynamic flight mapping to drop fresh dosas at your balcony in 180 seconds.
+          </p>
+          <div class="hero-ctas">
+            <button class="btn btn-primary" id="hero-order-btn">
+              <span>Order Now</span>
+              <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+            </button>
+            <a href="#features" class="btn btn-secondary" id="hero-explore-btn">
+              <span>Explore Tech</span>
+            </a>
+          </div>
+          
+          <div class="hero-metrics">
+            <div class="metric-item">
+              <span class="metric-number">180s</span>
+              <span class="metric-label">Avg. Flight Time</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-number">75°C</span>
+              <span class="metric-label">Insulated Lock</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-number">1.2M+</span>
+              <span class="metric-label">Dosas Delivered</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="hero-graphic-container reveal reveal-delay-2">
+          <div class="hero-graphic-glow"></div>
+          <!-- Hero Drone Image (Generated Visual) -->
+          <img src="./airdosa_drone_delivery.png" alt="AirDosa High-Tech Delivery Drone Carrying a Dosa" class="hero-drone-image" id="hero-main-image">
+          
+          <!-- Interactive Badge overlays -->
+          <div class="hero-tag-badge badge-top-right">
+            <div class="badge-icon">
+              <i data-lucide="thermometer" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="badge-text">
+              <h4>Thermal Shield</h4>
+              <p>Locked at 75°C</p>
+            </div>
+          </div>
+          
+          <div class="hero-tag-badge badge-bottom-left">
+            <div class="badge-icon cyan-bg">
+              <i data-lucide="navigation" style="width: 18px; height: 18px;"></i>
+            </div>
+            <div class="badge-text">
+              <h4>AI Pathing</h4>
+              <p>Rerouting: Birds Avoided</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-tag">High-Tech Dining</span>
+          <h2 class="section-title">Engineered to Keep It Crispy</h2>
+          <p class="section-desc">We solved the ultimate culinary challenge: delivering authentic South Indian crepes through the sky without turning them soggy.</p>
+        </div>
+        
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <div class="feature-card reveal reveal-delay-1">
+            <div class="feature-icon-container">
+              <i data-lucide="flame" style="width: 28px; height: 28px;"></i>
+            </div>
+            <h3>Insulated Thermal Pods</h3>
+            <p>Our drone pod features carbon-fiber insulation and humidity release valves. Excess steam escapes while preserving 75°C heat, guaranteeing absolute crunchiness on arrival.</p>
+          </div>
+          
+          <!-- Card 2 -->
+          <div class="feature-card reveal reveal-delay-2">
+            <div class="feature-icon-container" style="color: var(--accent-cyan); background: rgba(34, 211, 238, 0.08);">
+              <i data-lucide="cpu" style="width: 28px; height: 28px;"></i>
+            </div>
+            <h3>3D Real-Time Autopilot</h3>
+            <p>Powered by our proprietary AI path-finding array. Drones navigate complex urban grid wires, high-rise balconies, and bird flights dynamically without human operators.</p>
+          </div>
+          
+          <!-- Card 3 -->
+          <div class="feature-card reveal reveal-delay-3">
+            <div class="feature-icon-container">
+              <i data-lucide="database" style="width: 28px; height: 28px;"></i>
+            </div>
+            <h3>Micro-Cloud Kitchens</h3>
+            <p>We deploy automated culinary bays every 2km. The moment your order reaches our system, automated pans roast and seal your dosa inside the drone capsule in under 60 seconds.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section" id="pricing" style="background: rgba(15, 23, 42, 0.15);">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-tag">Subscription Plans</span>
+          <h2 class="section-title">Upgrade Your Breakfast</h2>
+          <p class="section-desc">Flexible plans built for Sunday morning family feasts or high-frequency developers writing code on empty stomachs.</p>
+        </div>
+        
+        <div class="pricing-grid">
+          <!-- Plan 1 -->
+          <div class="pricing-card reveal reveal-delay-1" id="plan-single">
+            <h3 class="plan-name">Single Flight</h3>
+            <p class="plan-desc">For occasional dosa cravers who want rapid delivery without monthly commitments.</p>
+            <div class="plan-price-container">
+              <span class="plan-currency">₹</span>
+              <span class="plan-price">49</span>
+              <span class="plan-period">/ delivery</span>
+            </div>
+            <ul class="plan-features">
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Standard drone dispatch queue</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Live telemetry & route tracking</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Classic sambar/chutney pod kit</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Dynamic weather surge billing</li>
+            </ul>
+            <button class="btn btn-secondary btn-pricing order-trigger-btn" id="pricing-buy-single">Order Single Flight</button>
+          </div>
+          
+          <!-- Plan 2 -->
+          <div class="pricing-card popular reveal reveal-delay-2" id="plan-pass">
+            <span class="popular-badge">DAILY LOVER</span>
+            <h3 class="plan-name">DosaPass Pro</h3>
+            <p class="plan-desc">Perfect for office workers and developers. Zero-friction daily dosa fueling.</p>
+            <div class="plan-price-container">
+              <span class="plan-currency">₹</span>
+              <span class="plan-price">399</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <ul class="plan-features">
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Unlimited free drone deliveries</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Priority launch dispatch (&lt;120s)</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Live drone camera video feed</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Custom batters (Ragi, Millet, Cheese)</li>
+              <li><i data-lucide="check" style="width: 16px; height: 16px;"></i> Zero surge pricing during monsoons</li>
+            </ul>
+            <button class="btn btn-primary btn-pricing order-trigger-btn" id="pricing-buy-pro">Get DosaPass Pro</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="2" />
+            <path d="M12 4c2.2 0 4 .8 4 2s-1.8 2-4 2-4-.8-4-2 1.8-2 4-2z M12 16c2.2 0 4 .8 4 2s-1.8 2-4 2-4-.8-4-2 1.8-2 4-2z" opacity="0.4"/>
+            <path d="M4 12c0-2.2.8-4 2-4s2 1.8 2 4-.8 4-2 4-2-1.8-2-4z M16 12c0-2.2.8-4 2-4s2 1.8 2 4-.8 4-2 4-2-1.8-2-4z" opacity="0.4"/>
+            <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.5" />
+            <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+          <span>AirDosa</span>
+        </a>
+        <p>Providing automated breakfast grids across metro India. Crispy food, electric skyways.</p>
+        <div class="system-status-indicator" id="footer-system-status">
+          <div class="status-dot"></div>
+          <span>Status: 482 Drone Units Online</span>
+        </div>
+      </div>
+      
+      <div class="footer-links-col">
+        <h4 class="footer-links-title">Technology</h4>
+        <ul class="footer-links">
+          <li><a href="#features" id="foot-link-drones">Autonomous Flight</a></li>
+          <li><a href="#" id="foot-link-kitchens">Micro Cloud Kitchens</a></li>
+          <li><a href="#" id="foot-link-api">Developer API</a></li>
+          <li><a href="#" id="foot-link-safety">Safety Guidelines</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-links-col">
+        <h4 class="footer-links-title">Startup</h4>
+        <ul class="footer-links">
+          <li><a href="#" id="foot-link-careers">Careers</a></li>
+          <li><a href="#" id="foot-link-press">Press Kit</a></li>
+          <li><a href="#" id="foot-link-invest">Investors</a></li>
+          <li><a href="#" id="foot-link-contact">Contact Fleet Admin</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>&copy; 2026 AirDosa Technologies Pvt. Ltd. All rights reserved.</p>
+      <p>Flight grid certified under DGCA regulations.</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       FLOATING ACTION ACTION BUTTON (ORDER NOW)
+       ========================================== -->
+  <button class="btn-floating-order order-trigger-btn" id="floating-order-btn" aria-label="Open Order Panel">
+    <i data-lucide="shopping-bag"></i>
+  </button>
+
+  <!-- ==========================================
+       INTERACTIVE ORDER DRAWER
+       ========================================== -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  <div class="order-drawer" id="order-drawer">
+    
+    <!-- Header -->
+    <div class="drawer-header">
+      <h2>Custom Flight Dispatch</h2>
+      <button class="btn-close-drawer" id="close-drawer-btn" aria-label="Close Panel">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+    </div>
+    
+    <!-- Body: Form Options -->
+    <div class="drawer-body" id="drawer-form-body">
+      <!-- Dosa Selection -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Step 1: Choose Your Payload</span>
+        <div class="dosa-grid">
+          
+          <div class="dosa-option selected" data-price="89" data-name="Classic Masala Pod" id="dosa-opt-masala">
+            <div class="dosa-option-info">
+              <span class="dosa-name">Classic Masala Pod</span>
+              <span class="dosa-desc">Crispy crust, aromatic spiced potato smash.</span>
+            </div>
+            <span class="dosa-price">₹89</span>
+          </div>
+          
+          <div class="dosa-option" data-price="109" data-name="Ghee Roast Velocity" id="dosa-opt-ghee">
+            <div class="dosa-option-info">
+              <span class="dosa-name">Ghee Roast Velocity</span>
+              <span class="dosa-desc">Double-brushed pure cow ghee, extreme crisp.</span>
+            </div>
+            <span class="dosa-price">₹109</span>
+          </div>
+          
+          <div class="dosa-option" data-price="119" data-name="Nitro Gunpowder Podi" id="dosa-opt-nitro">
+            <div class="dosa-option-info">
+              <span class="dosa-name">Nitro Gunpowder Podi</span>
+              <span class="dosa-desc">Gunpowder spice mix, high-heat capsule.</span>
+            </div>
+            <span class="dosa-price">₹119</span>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Spice Multiplier -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Step 2: Spice Flight Level</span>
+        <div class="spice-container">
+          <div class="spice-header">
+            <span>Spice Multiplier</span>
+            <span class="spice-val-display" id="spice-val-display">3x (Hyderabad Heat)</span>
+          </div>
+          <div class="slider-wrapper">
+            <input type="range" min="1" max="5" value="3" class="spice-slider" id="spice-slider">
+          </div>
+          <p class="spice-label-under" id="spice-label-under">🌶️🌶️🌶️ High-altitude thermal kick</p>
+        </div>
+      </div>
+      
+      <!-- Coordinates -->
+      <div class="drawer-section">
+        <span class="drawer-section-title">Step 3: Delivery Grid Pad</span>
+        <div class="form-group">
+          <label class="form-label" for="address-input">Balcony/Window Landing Address</label>
+          <input type="text" id="address-input" class="form-input" placeholder="Flat 402, Block B, Gold Crest Apts">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="pin-input">Drop Zone Pin (e.g. 560001)</label>
+          <input type="number" id="pin-input" class="form-input" placeholder="560103" max="999999">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer: Price Summary and Checkout -->
+    <div class="drawer-footer" id="drawer-form-footer">
+      <div class="summary-row">
+        <span class="summary-label">Total Cost (incl. flight charges)</span>
+        <span class="summary-val" id="checkout-total-val">₹138</span>
+      </div>
+      <button class="btn btn-primary btn-checkout" id="launch-flight-btn">
+        <i data-lucide="rocket" style="width: 18px; height: 18px;"></i>
+        <span>Launch Delivery Flight</span>
+      </button>
+    </div>
+    
+    <!-- Simulated Radar Interface (Hidden initially) -->
+    <div class="simulation-container" id="simulation-container">
+      <h3 style="text-align: center; font-size: 1.15rem; color: var(--accent-cyan); letter-spacing: 0.05em; text-transform: uppercase;">
+        Live Telemetry Feed
+      </h3>
+      
+      <!-- Radar Sweeper Graphics -->
+      <div class="radar-screen-wrapper">
+        <svg class="radar-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sweep-gradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(34, 211, 238, 0.6)" />
+              <stop offset="20%" stop-color="rgba(34, 211, 238, 0.3)" />
+              <stop offset="100%" stop-color="rgba(34, 211, 238, 0)" />
+            </radialGradient>
+          </defs>
+          
+          <!-- Concentric Grid Lines -->
+          <circle cx="110" cy="110" r="30" class="radar-grid" />
+          <circle cx="110" cy="110" r="60" class="radar-grid" />
+          <circle cx="110" cy="110" r="90" class="radar-grid" />
+          
+          <!-- Grid Crosshairs -->
+          <line x1="110" y1="10" x2="110" y2="210" class="radar-grid" />
+          <line x1="10" y1="110" x2="210" y2="110" class="radar-grid" />
+          
+          <!-- Sweeper Line -->
+          <polygon points="110,110 110,10 160,25 110,110" class="radar-sweep" />
+          
+          <!-- Target Coordinates (Center target) -->
+          <circle cx="110" cy="110" r="2" fill="white" />
+          
+          <!-- Moving Blip representing the Dosa Drone -->
+          <circle cx="60" cy="70" r="5" class="radar-blip" id="radar-drone-blip" />
+        </svg>
+      </div>
+      
+      <!-- Progress details -->
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="sim-progress-bar"></div>
+      </div>
+      
+      <div class="summary-row" style="font-size: 0.9rem;">
+        <span style="color: var(--text-secondary);">Altitude: <strong id="sim-alt">0m</strong></span>
+        <span style="color: var(--text-secondary);">Velocity: <strong id="sim-vel">0 km/h</strong></span>
+      </div>
+      
+      <!-- Logger console output -->
+      <div class="console-logger" id="console-logger">
+        <!-- Dyn logs -->
+      </div>
+      
+      <!-- Finished state UI -->
+      <div class="delivery-success-wrapper" id="delivery-success-wrapper">
+        <div class="success-badge">
+          <i data-lucide="check"></i>
+        </div>
+        <h4 class="success-title">Landing Confirmed!</h4>
+        <p class="success-desc">Thermal pod opened. Enjoy your crispy dosa! Please rate the flight pilot in the app.</p>
+        <button class="btn btn-secondary" id="restart-order-btn" style="margin-top: 10px; width: 100%; justify-content: center;">
+          Order Another Dosa
+        </button>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Initialise Lucide Icons
+      lucide.createIcons();
+
+      // ==========================================
+      // 2. THEME SWITCHER LOGIC
+      // ==========================================
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      // Set theme on load based on storage or media queries
+      const currentSavedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', currentSavedTheme);
+
+      themeToggleBtn.addEventListener('click', () => {
+        const theme = document.documentElement.getAttribute('data-theme');
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+      });
+
+      // ==========================================
+      // 3. SCROLL REVEAL ANIMATIONS
+      // ==========================================
+      const revealElements = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            revealObserver.unobserve(entry.target); // Reveal only once
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px' // Trigger slightly before element is fully visible
+      });
+
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // Trigger initial reveal check for hero section items on load
+      setTimeout(() => {
+        document.querySelector('.hero .reveal').classList.add('active');
+        document.querySelector('.hero-graphic-container').classList.add('active');
+      }, 100);
+
+      // ==========================================
+      // 4. ORDER DRAWER INTERACTION
+      // ==========================================
+      const drawer = document.getElementById('order-drawer');
+      const overlay = document.getElementById('drawer-overlay');
+      const closeBtn = document.getElementById('close-drawer-btn');
+      const openTriggers = document.querySelectorAll('.order-trigger-btn, #hero-order-btn, #launch-app-btn');
+      const dosaOptions = document.querySelectorAll('.dosa-option');
+      const spiceSlider = document.getElementById('spice-slider');
+      const spiceValDisplay = document.getElementById('spice-val-display');
+      const spiceLabelUnder = document.getElementById('spice-label-under');
+      const checkoutTotalVal = document.getElementById('checkout-total-val');
+      const launchBtn = document.getElementById('launch-flight-btn');
+      const formBody = document.getElementById('drawer-form-body');
+      const formFooter = document.getElementById('drawer-form-footer');
+      const simContainer = document.getElementById('simulation-container');
+      const restartBtn = document.getElementById('restart-order-btn');
+      
+      let selectedDosaPrice = 89;
+      const baseDeliveryFee = 49;
+
+      // Toggle drawer visibility
+      function openDrawer() {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Disable background scrolling
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.style.overflow = ''; // Re-enable background scrolling
+        // Reset flight screen if open
+        setTimeout(resetOrderForm, 400);
+      }
+
+      openTriggers.forEach(btn => btn.addEventListener('click', openDrawer));
+      closeBtn.addEventListener('click', closeDrawer);
+      overlay.addEventListener('click', closeDrawer);
+
+      // Dosa Option Selection
+      dosaOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+          dosaOptions.forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          selectedDosaPrice = parseInt(opt.getAttribute('data-price'));
+          updateTotal();
+        });
+      });
+
+      // Spice slider interaction
+      const spiceLevels = [
+        { label: 'Mild Altitude', desc: '😊 Cool flight breeze. Zero spice drag.', emoji: '🍃' },
+        { label: 'Bengaluru Warmth', desc: '🌶️ Perfect hover temperature. Subtle hint of green chili.', emoji: '🌶️' },
+        { label: 'Hyderabad Heat', desc: '🌶️🌶️ Medium altitude friction. High red chili content.', emoji: '🌶️🌶️' },
+        { label: 'Rocket Fuel', desc: '🌶️🌶️🌶️ Turbocharger active. Genuine volcanic gunpowder.', emoji: '🌶️🌶️🌶️' },
+        { label: 'AI Hyper-Combustion', desc: '🔥 WARNING: Extreme thermal friction. Spiced flight warning.', emoji: '🌶️🌶️🌶️🌶️🌶️ 🔥' }
+      ];
+
+      spiceSlider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value) - 1;
+        spiceValDisplay.textContent = `${val + 1}x (${spiceLevels[val].label})`;
+        spiceLabelUnder.textContent = `${spiceLevels[val].emoji} ${spiceLevels[val].desc}`;
+      });
+
+      function updateTotal() {
+        const total = selectedDosaPrice + baseDeliveryFee;
+        checkoutTotalVal.textContent = `₹${total}`;
+      }
+
+      // Initialize calculations
+      updateTotal();
+
+      // ==========================================
+      // 5. RADAR TELEMETRY SIMULATOR LOGIC
+      // ==========================================
+      const logger = document.getElementById('console-logger');
+      const blip = document.getElementById('radar-drone-blip');
+      const progressBar = document.getElementById('sim-progress-bar');
+      const simAlt = document.getElementById('sim-alt');
+      const simVel = document.getElementById('sim-vel');
+      const successWrapper = document.getElementById('delivery-success-wrapper');
+
+      let logInterval;
+      let flightTimeout;
+      
+      launchBtn.addEventListener('click', startFlightSimulation);
+      restartBtn.addEventListener('click', resetOrderForm);
+
+      function addLogLine(msg, type = 'info') {
+        const now = new Date();
+        const timeStr = now.toTimeString().split(' ')[0];
+        
+        const line = document.createElement('div');
+        line.className = 'console-line';
+        
+        let typeClass = '';
+        if (type === 'success') typeClass = 'line-success';
+        if (type === 'warning') typeClass = 'line-warning';
+
+        line.innerHTML = `
+          <span class="line-time">[${timeStr}]</span>
+          <span class="line-msg ${typeClass}">${msg}</span>
+        `;
+        
+        logger.appendChild(line);
+        logger.scrollTop = logger.scrollHeight;
+      }
+
+      function startFlightSimulation() {
+        // Validate fields before proceeding (just simple check)
+        const address = document.getElementById('address-input').value.trim();
+        if (!address) {
+          alert('Please enter your balcony or window drop grid coordinates.');
+          return;
+        }
+
+        // Hide form inputs, show flight telemetry screen
+        formBody.style.display = 'none';
+        formFooter.style.display = 'none';
+        simContainer.classList.add('active');
+
+        // Initial setup
+        logger.innerHTML = '';
+        progressBar.style.width = '0%';
+        blip.classList.remove('active');
+        successWrapper.classList.remove('active');
+        simAlt.textContent = '0m';
+        simVel.textContent = '0 km/h';
+
+        const droneName = `AD-${Math.floor(100 + Math.random() * 900)}`;
+        const selectedDosaName = document.querySelector('.dosa-option.selected').getAttribute('data-name');
+
+        // Simulation Timeline steps (Time in ms, dynamic logs)
+        const steps = [
+          { time: 0, progress: 5, alt: 0, vel: 0, log: `KITCHEN: Instant-heating pod engaged. Roasting ${selectedDosaName}...`, type: 'info' },
+          { time: 1500, progress: 15, alt: 0, vel: 0, log: `CONTAINMENT: Dosa locked in vacuum sealed 75°C capsule. Load secure.`, type: 'info' },
+          { time: 3000, progress: 30, alt: 10, vel: 15, log: `DISPATCH: Drone ${droneName} vertical lift approved. GPS locked on address: ${address}.`, type: 'warning' },
+          { time: 5000, progress: 55, alt: 35, vel: 45, log: `AUTOPILOT: Flight altitude 35 meters. Wind velocity 8 knots. AI path planning active.`, type: 'info' },
+          { time: 7000, progress: 75, alt: 32, vel: 42, log: `LIDAR SENSOR: Flying object (common pigeon) identified at Grid quadrant C-5. Rerouting...`, type: 'warning' },
+          { time: 9000, progress: 90, alt: 12, vel: 12, log: `DESCENT: Hovering above target delivery pad coordinates. Deploying hover cable.`, type: 'info' },
+          { time: 11000, progress: 100, alt: 0, vel: 0, log: `DELIVERY COMPLETE: Capsule magnetic lock released. Enjoy your crispy dosa!`, type: 'success' }
+        ];
+
+        // Execute timeline
+        steps.forEach(step => {
+          setTimeout(() => {
+            progressBar.style.width = `${step.progress}%`;
+            simAlt.textContent = `${step.alt}m`;
+            simVel.textContent = `${step.vel} km/h`;
+            addLogLine(step.log, step.type);
+
+            // Turn on blip when drone launches, make it pulse/move
+            if (step.progress >= 30 && step.progress < 100) {
+              blip.classList.add('active');
+              // Move blip randomly on coordinate panel
+              const randomX = 70 + Math.random() * 80;
+              const randomY = 70 + Math.random() * 80;
+              blip.setAttribute('cx', randomX);
+              blip.setAttribute('cy', randomY);
+            } else if (step.progress === 100) {
+              // Target coordinates arrived
+              blip.setAttribute('cx', '110');
+              blip.setAttribute('cy', '110');
+              blip.classList.add('active');
+              // Trigger final success card
+              successWrapper.classList.add('active');
+            }
+          }, step.time);
+        });
+      }
+
+      function resetOrderForm() {
+        // Toggle interface elements back to inputs
+        formBody.style.display = 'flex';
+        formFooter.style.display = 'flex';
+        simContainer.classList.remove('active');
+        successWrapper.classList.remove('active');
+        
+        // Reset address
+        document.getElementById('address-input').value = '';
+        document.getElementById('pin-input').value = '';
+        
+        // Clean radar variables
+        progressBar.style.width = '0%';
+        blip.classList.remove('active');
+        blip.setAttribute('cx', '60');
+        blip.setAttribute('cy', '70');
+        logger.innerHTML = '';
+      }
+    });
+  </script>
+</body>
+</html>
